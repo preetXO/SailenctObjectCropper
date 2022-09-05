@@ -9,11 +9,17 @@ load_dotenv()
 END_POINT = 'http://20.125.131.148:8080/upload_bulk'
 
 flash_list = []
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'jfif'])
+string_to_replace = {'.' + i: '.png' for i in ALLOWED_EXTENSIONS}
 
 
 def create_app():
     app = Flask(__name__)
     app.secret_key = 'abc'
+
+    @app.context_processor
+    def allowed_extensions():
+        return {"allowed_extensions": ALLOWED_EXTENSIONS}
 
     @app.route('/', methods=['GET', 'POST'])
     def index():  # put application's code here
@@ -31,7 +37,10 @@ def create_app():
                 else:
                     flash_list.append(f'processing {file} - <response code - {200}>')
                     response = requests.get(response.json()['image'])
-                    with open('result/' + file.split('.')[0] + '_processed.png', 'wb') as f:
+                    png_filename = file
+                    for string, replace_value in string_to_replace.items():
+                        png_filename = png_filename.replace(string, replace_value)
+                    with open('result/' + 'processed_' + png_filename, 'wb') as f:
                         f.write(response.content)
 
         if request.method == 'POST':
@@ -39,6 +48,13 @@ def create_app():
             # requests.post('http://20.125.131.148:8080/deleteall').raise_for_status()
             for file in request.files.getlist('file'):
                 file.save('Uploaded_files/' + file.filename)
+                if file.filename.endswith('.zip'):
+                    shutil.unpack_archive('Uploaded_files/' + file.filename, 'Uploaded_files')
+                    dir_name = 'test_zip'.replace('.zip', '')
+                    for nested_file in os.listdir('Uploaded_files/' + dir_name):
+                        shutil.move(f'Uploaded_files/{dir_name}/{nested_file}', 'Uploaded_files')
+                    os.remove('Uploaded_files/' + file.filename)
+                    os.rmdir(f'Uploaded_files/{dir_name}')
             global t
             t = Thread(target=worker)
             t.start()
@@ -50,7 +66,8 @@ def create_app():
 
     @app.route('/processing')
     def processing():
-        return render_template('processing.html', images=[file for file in os.listdir('result')])
+        return render_template('processing.html', images=[file for file in os.listdir('result')],
+                               size=len(os.listdir('Uploaded_files')))
 
     @app.route('/get_image/<filename>')
     def get_image(filename):
@@ -77,6 +94,12 @@ def create_app():
     def download():
         shutil.make_archive('result', 'zip', 'result')
         return send_file('result.zip', mimetype='application/zip')
+
+    def get_count():
+        count = len(os.listdir('result'))
+        return count
+
+    app.jinja_env.globals.update(get_count=get_count)
     return app
 
 

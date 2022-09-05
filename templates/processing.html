@@ -1,20 +1,39 @@
 {% extends 'index.html' %}
+
+{% set count = get_count() %}
+
 {% block messages %}
-  <h3>Processed images: </h3>
-  {% for image in images %}
+  <br>
+  <br>
+  <p>Showing first 5% Processed images: </p>
+  {% for image in images[:size // 20] %}
     <img src='/get_image/{{ image }}' alt="404 error" width="20%" height="20%">
   {% endfor %}
+
   <form action="/flush" method="get">
     <button type="submit">Click here to clear the memory</button>
   </form>
-  <form action="/download" method="get">
-    <button type="submit">Download</button>
-  </form>
+
+  <p>Processed images: {{ count }}/{{ size }}</p>
+
+  {% if count == size %}
+    <form action="/download" method="get">
+      <button type="submit">Download</button>
+    </form>
+  {% endif %}
 {% endblock %}
-{% block script %}
-  <script>
-      setInterval(() => {
-          window.location.reload();
-      }, 4000);
-  </script>
+
+{% block meta %}
+  {% if count == size %}
+
+  {% else %}
+    <meta http-equiv="refresh" content="3">
+  {% endif %}
 {% endblock %}
+{#{% block script %}#}
+{#  <script>#}
+{#      setInterval(() => {#}
+{#          window.location.reload();#}
+{#      }, 60000);#}
+{#  </script>#}
+{#{% endblock %}#}

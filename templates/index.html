@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
+  <p>Allowed extensions are: </p>
+  <ol>
+    {% for extension in allowed_extensions %}
+      <li>{{ extension }}</li>
+    {% endfor %}
+  </ol>
+  <p>You can also upload zip of images, but make sure it contains the images of type mentioned above</p>
   <form method="POST" enctype="multipart/form-data" action="/">
     <input type="file" name="file" multiple>
     <button type="submit">Submit files</button>

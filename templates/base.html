@@ -2,12 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Image Cropper</title>
+    <title>Bulk Image Background Remover</title>
+    {% block meta %}
+    {% endblock %}
+    <style>
+      div.item {
+        vertical-align: top;
+        display: inline-block;
+        text-align: center;
+        width: 120px;
+      }
+      img {
+        width: 100px;
+        height: 100px;
+        background-color: #1c1a1a;
+    </style>
   </head>
   <body>
+    <h1 style="margin: auto 25rem">Bulk image background remover tool</h1>
     {% block content %}
     {% endblock %}
   </body>
-{% block script %}
-{% endblock %}
+  {% block script %}
+  {% endblock %}
 </html>
