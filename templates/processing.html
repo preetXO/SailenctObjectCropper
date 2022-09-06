@@ -1,12 +1,12 @@
-{% extends 'index.html' %}
+{% extends 'base.html' %}
 
 {% set count = get_count() %}
 
-{% block messages %}
+{% block content %}
   <br>
   <br>
-  <p>Showing first 5% Processed images: </p>
-  {% for image in images[:size // 20] %}
+  <p>Showing Processed images: </p>
+  {% for image in images %}
     <img src='/get_image/{{ image }}' alt="404 error" width="20%" height="20%">
   {% endfor %}
 

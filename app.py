@@ -48,9 +48,12 @@ def create_app():
             # requests.post('http://20.125.131.148:8080/deleteall').raise_for_status()
             for file in request.files.getlist('file'):
                 file.save('Uploaded_files/' + file.filename)
-                if file.filename.endswith('.zip'):
-                    shutil.unpack_archive('Uploaded_files/' + file.filename, 'Uploaded_files')
-                    dir_name = 'test_zip'.replace('.zip', '')
+                if file.filename.endswith(('.zip', '.rar')):
+                    if file.filename.endswith('.rar'):
+                        shutil.unpack_archive('Uploaded_files/' + file.filename, 'Uploaded_files', 'rar')
+                    else:
+                        shutil.unpack_archive('Uploaded_files/' + file.filename, 'Uploaded_files')
+                    dir_name = file.filename.replace('.zip', '').replace('.rar', '')
                     for nested_file in os.listdir('Uploaded_files/' + dir_name):
                         shutil.move(f'Uploaded_files/{dir_name}/{nested_file}', 'Uploaded_files')
                     os.remove('Uploaded_files/' + file.filename)
