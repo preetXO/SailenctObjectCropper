@@ -4,11 +4,11 @@
 
 {% block content %}
   <br>
-  <br>
-  <p>Showing Processed images: </p>
-  {% for image in images %}
-    <img src='/get_image/{{ image }}' alt="404 error" width="20%" height="20%">
-  {% endfor %}
+{#  <br>#}
+{#  <p>Showing Processed images: </p>#}
+{#  {% for image in images %}#}
+{#    <img src='/get_image/{{ image }}' alt="404 error" width="20%" height="20%">#}
+{#  {% endfor %}#}
 
   <form action="/flush" method="get">
     <button type="submit">Click here to clear the memory</button>
